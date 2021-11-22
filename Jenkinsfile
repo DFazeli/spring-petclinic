@@ -7,7 +7,7 @@ pipeline {
           }
         }
         stage('Build') {
-            agent { docker 'maven:3.5-alpine' }
+          //  agent { docker 'maven:3.5-alpine' }
             steps {
                 sh 'mvn clean package'
                 junit '**/target/surefire-reports/TEST-*.xml'
@@ -17,8 +17,13 @@ pipeline {
         stage('Deploy') {
           steps {
             input 'Do you approve the deployment?'
-            sh 'scp target/*.jar jenkins@192.168.50.10:/opt/pet/'
-            sh "ssh jenkins@192.168.50.10 'nohup java -jar /opt/pet/spring-petclinic-1.5.1.jar &'"
+              
+            sh 'scp target/*.jar david@192.168.64.13:/home/david/spring-petclinic'
+            sh """
+                ssh david@192.168.64.13 'mkdir /home/david/spring-petclinic' 
+                ssh david@192.168.64.13 'nohup java -jar /home/david/spring-petclinic-1.5.1.jar &'
+               
+               """  
           }
         }
     }
